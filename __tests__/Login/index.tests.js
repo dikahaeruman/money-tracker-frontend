@@ -31,4 +31,17 @@ describe('Login Page', () => {
     expect(consoleSpy).toHaveBeenCalledWith('Credentials:', { email: 'test@test.com', password: 'password' });
     consoleSpy.mockRestore();
   });
+
+  it('password visibility toggle works correctly', () => {
+    const { getByLabelText } = render(<Login />);
+    const visibilityButton = getByLabelText('toggle password visibility')
+    console.log('debugging: ', visibilityButton);
+    fireEvent.click(visibilityButton);
+
+    expect(getByLabelText('Password').type).toBe('text');
+
+    fireEvent.click(getByLabelText('toggle password visibility'));
+
+    expect(getByLabelText('Password').type).toBe('password');
+  });
 });

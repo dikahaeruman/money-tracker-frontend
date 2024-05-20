@@ -1,9 +1,9 @@
 'use client'
 import { ChangeEvent, useState } from 'react';
-import { AccountCircle, LockRounded } from '@mui/icons-material';
+import { AccountCircle, LockRounded, Visibility, VisibilityOff } from '@mui/icons-material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import { Button, Container, Divider, FormControl, Grid, InputAdornment, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Button, CircularProgress, Container, Divider, FormControl, Grid, IconButton, InputAdornment, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import styles from './styles.module.css';
 import Image from 'next/image';
 
@@ -12,8 +12,14 @@ interface Credentials {
     password: string;
 }
 
+const loginApi = async (credentials: Credentials) => {
+    
+};
+
 const Login: React.FC = () => {
     const [credentials, setCredentials] = useState<Credentials>({ email: '', password: '' });
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -25,10 +31,21 @@ const Login: React.FC = () => {
         }));
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         console.log('Credentials:', credentials);
+
+        setIsLoading(true);
+
+        try {
+            const data = await loginApi(credentials);
+            console.log('Login response:', data);
+        } catch (error) {
+            console.error('Login error:', error);
+        }
     };
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     return (
         <Container className={styles.container}>
@@ -56,7 +73,10 @@ const Login: React.FC = () => {
                                             </InputAdornment>
                                         ),
                                     }}
+                                    type="email"
                                     variant="outlined"
+                                    required
+                                    InputLabelProps={{ required: false }}
                                 />
                             </FormControl>
                             <FormControl fullWidth margin="normal">
@@ -72,16 +92,35 @@ const Login: React.FC = () => {
                                                 <LockRounded />
                                             </InputAdornment>
                                         ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
                                     }}
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     variant="outlined"
+                                    required
+                                    InputLabelProps={{ required: false }}
                                 />
                             </FormControl>
                             <Typography variant="body2" align="right" gutterBottom>
                                 <a href="#forgotpassword" className={styles.forgotPassword}>Forgot Password?</a>
                             </Typography>
-                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
-                                Sign in
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                fullWidth sx={{ marginTop: 2 }}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? <CircularProgress size={24} /> : 'Sign in'}
                             </Button>
                             <Divider className={styles.loginDivider}>Or</Divider>
                             <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }} startIcon={<GoogleIcon />}>
