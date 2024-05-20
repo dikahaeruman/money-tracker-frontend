@@ -1,0 +1,41 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 0 24px;
+}
+
+.loginForm {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 40px;
+}
+
+.loginImageContainer {
+    display: flex;
+    align-items: center;
+}
+
+.loginRight {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.loginImage {
+    object-fit: cover;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.forgotPassword {
+    color: #0073e6;
+    text-decoration: none;
+}
+
+.forgotPassword:hover {
+    text-decoration: underline;
+}
