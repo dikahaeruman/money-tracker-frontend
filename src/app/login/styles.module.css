@@ -2,34 +2,44 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 24px;
-    height: 95vh; /* Set height to full viewport height */
-    box-sizing: border-box; /* Include padding and border in the element's total height */
+    padding: 24px;
+    height: 95vh;
+    box-sizing: border-box;
     overflow: hidden;
+    background-color: #829490;
+    margin-top: 45px;
 }
 
 .loginForm {
     background-color: #fff;
     border-radius: 8px;
     padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .loginImageContainer {
     display: flex;
     align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-bottom: 105px
 }
 
 .loginRight {
-    width: 100%;
     display: flex;
     justify-content: center;
+    height: 100%;
+    border-radius: 8px;
 }
 
 .loginImage {
-    object-fit: cover;
+    object-fit: fill;
     width: 100%;
     max-width: 100%;
-    height: auto;
+    height: 100%;
     border-radius: 8px;
 }
 

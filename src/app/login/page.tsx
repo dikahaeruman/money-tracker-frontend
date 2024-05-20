@@ -13,7 +13,7 @@ interface Credentials {
 }
 
 const loginApi = async (credentials: Credentials) => {
-    
+    // Your login API implementation
 };
 
 const Login: React.FC = () => {
@@ -49,8 +49,8 @@ const Login: React.FC = () => {
 
     return (
         <Container className={styles.container}>
-            <Grid container spacing={2} justifyContent="center" alignItems="center">
-                <Grid item xs={12} md={6} lg={4}>
+            <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ height: '100%', padding: '24px 0' }}>
+                <Grid item xs={12} md={6} lg={4} sx={{ height: '100%' }}>
                     <div className={styles.loginForm}>
                         <Typography variant="h4" align="center" gutterBottom>
                             Welcome Back👋
@@ -116,17 +116,22 @@ const Login: React.FC = () => {
                             <Button
                                 type="submit"
                                 variant="contained"
-                                color="primary"
-                                fullWidth sx={{ marginTop: 2 }}
+                                fullWidth sx={{ 
+                                    marginTop: 2, 
+                                    backgroundColor: '#2d3035',
+                                    '&:hover': {
+                                        backgroundColor: '#21262A',
+                                    }
+                                }}
                                 disabled={isLoading}
                             >
                                 {isLoading ? <CircularProgress size={24} /> : 'Sign in'}
                             </Button>
                             <Divider className={styles.loginDivider}>Or</Divider>
-                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }} startIcon={<GoogleIcon />}>
+                            <Button type="submit" variant="contained" fullWidth sx={{ marginTop: 2, backgroundColor: '#cd4034' }} startIcon={<GoogleIcon />}>
                                 Sign in with Google
                             </Button>
-                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }} startIcon={<FacebookIcon />}>
+                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2, backgroundColor: '#3f65c2' }} startIcon={<FacebookIcon />}>
                                 Sign in with Facebook
                             </Button>
                             <Typography variant="body2" align="center" className={styles.signUp}>
@@ -136,13 +141,13 @@ const Login: React.FC = () => {
                     </div>
                 </Grid>
                 {!isSmallScreen && (
-                    <Grid item xs={12} md={6} lg={8} className={styles.loginImageContainer}>
+                    <Grid item xs={12} md={6} lg={8} className={styles.loginImageContainer} sx={{ height: '100%' }}>
                         <div className={styles.loginRight}>
                             <Image
                                 src="/assets/images/login.jpg"
                                 alt="Money Management"
-                                width={800}
-                                height={850}
+                                width={1920}
+                                height={1080}
                                 className={styles.loginImage}
                             />
                         </div>
