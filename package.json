@@ -10,14 +10,12 @@
     "test": "jest --verbose ./__tests__"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
     "@fontsource/roboto": "^5.0.13",
-    "@mui/icons-material": "^5.15.18",
-    "@mui/material": "^5.15.18",
+    "antd": "^5.17.3",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "unsplash-js": "^7.0.19"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
