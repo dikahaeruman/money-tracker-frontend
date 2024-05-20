@@ -1,7 +1,9 @@
 'use client'
 import { ChangeEvent, useState } from 'react';
 import { AccountCircle, LockRounded } from '@mui/icons-material';
-import { Button, Container, FormControl, Grid, InputAdornment, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import { Button, Container, Divider, FormControl, Grid, InputAdornment, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import styles from './styles.module.css';
 import Image from 'next/image';
 
@@ -81,6 +83,16 @@ const Login: React.FC = () => {
                             <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
                                 Sign in
                             </Button>
+                            <Divider className={styles.loginDivider}>Or</Divider>
+                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }} startIcon={<GoogleIcon />}>
+                                Sign in with Google
+                            </Button>
+                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }} startIcon={<FacebookIcon />}>
+                                Sign in with Facebook
+                            </Button>
+                            <Typography variant="body2" align="center" className={styles.signUp}>
+                                Don't you have an account? <a href="#forgotpassword" className={styles.signUpLink}>Sign up</a>
+                            </Typography>
                         </form>
                     </div>
                 </Grid>

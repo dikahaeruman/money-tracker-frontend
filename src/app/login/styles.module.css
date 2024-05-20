@@ -2,8 +2,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
     padding: 0 24px;
+    height: 95vh; /* Set height to full viewport height */
+    box-sizing: border-box; /* Include padding and border in the element's total height */
+    overflow: hidden;
 }
 
 .loginForm {
@@ -37,5 +39,22 @@
 }
 
 .forgotPassword:hover {
+    text-decoration: underline;
+}
+
+.loginDivider {
+    margin-top: 35px;
+    margin-bottom: 35px;
+}
+
+.signUp {
+    margin-top: 15px;
+}
+
+.signUpLink {
+    text-decoration: none;
+}
+
+.signUpLink:hover {
     text-decoration: underline;
 }
