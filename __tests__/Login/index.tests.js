@@ -28,13 +28,16 @@ describe('Login Page', () => {
     const consoleSpy = jest.spyOn(console, 'log');
     fireEvent.click(button);
 
-    expect(consoleSpy).toHaveBeenCalledWith('Credentials:', { email: 'test@test.com', password: 'password' });
+    expect(consoleSpy).toHaveBeenCalledWith('Credentials:', {
+      email: 'test@test.com',
+      password: 'password',
+    });
     consoleSpy.mockRestore();
   });
 
   it('password visibility toggle works correctly', () => {
     const { getByLabelText } = render(<Login />);
-    const visibilityButton = getByLabelText('toggle password visibility')
+    const visibilityButton = getByLabelText('toggle password visibility');
     console.log('debugging: ', visibilityButton);
     fireEvent.click(visibilityButton);
 
