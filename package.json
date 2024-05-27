@@ -13,6 +13,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.0.13",
     "antd": "^5.17.3",
+    "axios": "^1.7.2",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
