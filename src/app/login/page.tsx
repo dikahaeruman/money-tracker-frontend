@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Input, Typography, Button, Divider, Form } from 'antd';
+import { useRouter } from 'next/navigation';
+import { Input, Typography, Button, Divider, Form, Alert } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
 import unsplash from '@/utils/unsplash';
@@ -12,25 +13,34 @@ const Login: React.FC = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const history = useRouter();
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    setErrorMessage('');
   };
 
   const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+    setErrorMessage('');
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
+      event.preventDefault();
+      setIsLoading(true);
       const response = await axios.post('/api/auth/login', { email, password });
+      setIsLoading(false);
       if (response.status === 200) {
-        console.log('token : ', response.data.token);
+        history.push('/dashboard');
       } else {
-        console.log('Login failed');
+        throw new Error('An error occurred');
       }
-    } catch (error) {
-      console.log('Error logging in:', error);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+      setIsLoading(false);
     }
   };
 
@@ -51,11 +61,16 @@ const Login: React.FC = () => {
           <Title className={styles.title}>Money Tracker</Title>
           <Paragraph>
             <Text>
-              Track your expenses effortlessly and save more with our
-              easy-to-use app. Sign in to get started!
+              {
+                'Track your expenses effortlessly and save more with our easy-to-use app. Sign in to get started!'
+              }
             </Text>
           </Paragraph>
         </Typography>
+        {errorMessage && (
+          <Alert className={styles.alert} message={errorMessage} type="error" />
+        )}
+
         <Input
           type="email"
           placeholder="Email"
@@ -75,7 +90,12 @@ const Login: React.FC = () => {
         <Paragraph className={styles.forgotPassword}>
           <Link href="#">Forgot Password?</Link>
         </Paragraph>
-        <Button type="primary" className={styles.button} htmlType="submit">
+        <Button
+          type="primary"
+          className={styles.button}
+          htmlType="submit"
+          loading={isLoading}
+        >
           Sign In
         </Button>
         <Divider>Or</Divider>

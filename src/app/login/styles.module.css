@@ -98,3 +98,7 @@
     display: none;
   }
 }
+
+.alert {
+  margin-bottom: 8px;
+}
