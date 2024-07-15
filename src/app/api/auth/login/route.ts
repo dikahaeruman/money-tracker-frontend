@@ -4,7 +4,7 @@ import axios from 'axios';
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
-    const response = await axios.post('http://localhost:8181/login', {
+    const response = await axios.post(`${process.env.BASE_URL}/login`, {
       email,
       password,
     });
