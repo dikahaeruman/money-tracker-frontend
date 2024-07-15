@@ -27,19 +27,21 @@ const Login: React.FC = () => {
     setErrorMessage('');
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
-      event.preventDefault();
       setIsLoading(true);
       const response = await axios.post('/api/auth/login', { email, password });
-      setIsLoading(false);
       if (response.status === 200) {
+        console.log('token : ', response.data.token);
+        setIsLoading(false);
         history.push('/dashboard');
       } else {
-        throw new Error('An error occurred');
+        console.log('Login failed');
+        setIsLoading(false);
       }
     } catch (error: any) {
-      setErrorMessage(error.message);
+      console.log('Error logging in:', error);
+      setErrorMessage(error.response?.data?.error);
       setIsLoading(false);
     }
   };
