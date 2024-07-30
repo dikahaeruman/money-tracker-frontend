@@ -6,6 +6,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
 import unsplash from '@/utils/unsplash';
 import axios from 'axios';
+import Image from 'next/image'
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -58,7 +59,10 @@ const Login: React.FC = () => {
 
   return (
     <div className={styles.container}>
+
       <Form className={styles.formContainer} onFinish={handleSubmit}>
+        {/* TODO Contohnya gini alfan */}
+      <Image src="/assets/images/login.jpg" width={100} height={100} alt="Login Image" className={styles.image} />
         <Typography>
           <Title className={styles.title}>Money Tracker</Title>
           <Paragraph>
