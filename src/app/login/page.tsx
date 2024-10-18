@@ -114,7 +114,7 @@ const Login: React.FC = () => {
           Sign in with Google
         </Button>
         <Paragraph className={styles.signUpText}>
-          Don't you have an account? <Link href="/signup">Sign up</Link>
+          Don`t you have an account? <Link href="/signup">Sign up</Link>
         </Paragraph>
       </Form>
       <div className={styles.imageContainer}>
