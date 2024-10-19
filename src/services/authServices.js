@@ -11,6 +11,7 @@ export const login = async (email, password) => {
         });
 
         return response.json();
+        
     } catch (error) {
         console.log('Error logging in services:', error);
         return error;
