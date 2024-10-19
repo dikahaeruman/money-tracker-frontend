@@ -5,8 +5,8 @@ import { Input, Typography, Button, Divider, Form, Alert } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
 import unsplash from '@/utils/unsplash';
-import axios from 'axios';
 import Image from 'next/image'
+import {login} from '../../services/authServices';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -31,8 +31,9 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       setIsLoading(true);
-      const response = await axios.post('/api/auth/login', { email, password });
-      if (response.status === 200) {
+      const response = await login(email, password);
+
+      if (response.statusCode === 200) {
         console.log('token : ', response.data.token);
         setIsLoading(false);
         history.push('/dashboard');
