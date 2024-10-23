@@ -1,22 +1,34 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Typography, Button, Divider, Form, Alert } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
 import unsplash from '@/utils/unsplash';
-import Image from 'next/image'
-import {login} from '../../services/authServices';
+import { useQuery } from '@tanstack/react-query';
+import {fetchUserData, login} from '../../services/authServices';
+import { useUser } from '@/contexts/UserContext';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
+const fetchRandomImage = async () => {
+  const result = await unsplash.photos.getRandom({ query: 'nature' });
+  if (result.errors) {
+    throw new Error(result.errors[0]);
+  }
+  if ('response' in result && 'urls' in result.response) {
+    return result.response.urls.regular;
+  }
+  throw new Error('Unexpected response structure from Unsplash API');
+};
+
 const Login: React.FC = () => {
-  const [imageUrl, setImageUrl] = useState('');
+  const { setUser } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const history = useRouter();
+  const router = useRouter();
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -34,36 +46,29 @@ const Login: React.FC = () => {
       const response = await login(email, password);
 
       if (response.statusCode === 200) {
-        console.log('token : ', response.data.token);
-        setIsLoading(false);
-        history.push('/dashboard');
+        const userData = await fetchUserData(email);
+        setUser(userData.data);
+        router.push('/dashboard');
       } else {
-        console.log('Login failed');
-        setIsLoading(false);
+        setErrorMessage('Login failed. Please check your credentials.');
       }
     } catch (error: any) {
       console.log('Error logging in:', error);
-      setErrorMessage(error.response?.data?.error);
+      setErrorMessage(error.response?.data?.error || 'An error occurred during login.');
+    } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    unsplash.photos.getRandom({ query: 'nature' }).then((result: any) => {
-      if (result.errors) {
-        console.log('Error fetching image:', result.errors[0]);
-      } else {
-        setImageUrl(result.response.urls.regular);
-      }
-    });
-  }, []);
+  const { data: imageUrl, error: imageError } = useQuery({
+    queryKey: ['randomImage'],
+    queryFn: fetchRandomImage,
+    staleTime: Infinity,
+  });
 
   return (
     <div className={styles.container}>
-
       <Form className={styles.formContainer} onFinish={handleSubmit}>
-        {/* TODO Contohnya gini alfan */}
-      <Image src="/assets/images/login.jpg" width={100} height={100} alt="Login Image" className={styles.image} />
         <Typography>
           <Title className={styles.title}>Money Tracker</Title>
           <Paragraph>
@@ -120,7 +125,10 @@ const Login: React.FC = () => {
       </Form>
       <div className={styles.imageContainer}>
         {imageUrl && (
-          <img src={imageUrl} alt="Image" className={styles.image} />
+          <img src={imageUrl} alt="Random nature" className={styles.image} />
+        )}
+        {imageError && (
+          <p>Error loading image: {(imageError as Error).message}</p>
         )}
       </div>
     </div>

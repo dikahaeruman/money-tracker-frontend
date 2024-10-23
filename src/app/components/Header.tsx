@@ -1,12 +1,13 @@
+'use client';
 import React from 'react';
+import { useUser } from '@/contexts/UserContext';
 
 type HeaderProps = {
   title: string;
-  user: string;
-  status: string;
 };
 
-const Header: React.FC<HeaderProps> = ({ title, user, status }) => {
+const Header: React.FC<HeaderProps> = ({ title }) => {
+  const { user } = useUser();
   return (
     <header className="header">
       <div className="logo">
@@ -20,8 +21,8 @@ const Header: React.FC<HeaderProps> = ({ title, user, status }) => {
         <div className="profile">
           <div className="profile-pic" />
           <div className="profile-info">
-            <p className="profile-name">{user}</p>
-            <p className="profile-status">{status}</p>
+            <p className="profile-name">{user?.username || 'Guest'}</p>
+            <p className="profile-status"></p>
           </div>
         </div>
       </div>

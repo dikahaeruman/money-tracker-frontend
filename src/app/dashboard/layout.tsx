@@ -31,7 +31,7 @@ export default function RootLayout({
         <meta name="description" content={description} />
       </head>
       <body className={inter.className}>
-        <Header title="Dashboard" user="Ilyas Abduttawab" status="Premium" />
+        <Header title="Dashboard" />
         {children}
       </body>
     </html>
