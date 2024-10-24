@@ -36,3 +36,31 @@ export const fetchUserData = async (email: string) => {
         return error;
     }
 };
+
+export const verifyToken = async (token: string) => {
+    try {
+        const response = await fetch(`${url}/verify-token`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': `token=${token}`
+            },
+            credentials: 'include',
+        });
+        const data = await response.json();
+
+        return {
+            statusCode: response.status,
+            data: data,
+            ok: response.ok
+        };
+    } catch (error) {
+        console.log('Error verifying token:', error);
+        return {
+            statusCode: 500,
+            data: null,
+            ok: false,
+            error: 'An error occurred while verifying the token'
+        };
+    }
+}

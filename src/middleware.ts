@@ -1,25 +1,47 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { verifyToken } from '@/services/authServices';
 
-export default function middleware(request: NextRequest) {
-  const currentUser = request.cookies.get('token')?.value;
-  const authenticated = false;
+const PUBLIC_PATHS = ['/login', '/signup', '/forgot-password'];
+const STATIC_PATHS = ['/api', '/_next', '/auth', '/favicon.ico', '/robots.txt', '/images', '/assets'];
 
-  /*
-    todo: implement authorization logic
-  */
+function isPublicPath(path: string): boolean {
+  return PUBLIC_PATHS.includes(path) || STATIC_PATHS.some(prefix => path.startsWith(prefix));
+}
 
-  // if (!currentUser && request.nextUrl.pathname !== '/login') {
-  //   return NextResponse.redirect(new URL('/login', request.url));
-  // }
+export default async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get('token')?.value;
 
-  if (currentUser && request.nextUrl.pathname === '/login') {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  if (isPublicPath(pathname) && token) {
+    try {
+      const { statusCode } = await verifyToken(token);
+      if (statusCode === 200) {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
+    } catch (error) {
+      console.error('Error verifying token:', error);
+    }
   }
+
+  if (!isPublicPath(pathname)) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    try {
+      const { statusCode } = await verifyToken(token);
+      if (statusCode !== 200) {
+        throw new Error('Invalid token');
+      }
+    } catch (error) {
+      console.error('Error verifying token:', error);
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|auth|favicon.ico|robots.txt|images|assets|$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };
