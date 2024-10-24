@@ -1,13 +1,12 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Typography, Button, Divider, Form, Alert, Card, Space } from 'antd';
-import { EyeInvisibleOutlined, EyeTwoTone, MailOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
 import unsplash from '@/utils/unsplash';
 import { useQuery } from '@tanstack/react-query';
-import { fetchUserData, login } from '../../services/authServices';
-import { useUser } from '@/contexts/UserContext';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -22,8 +21,7 @@ const fetchRandomImage = async () => {
   throw new Error('Unexpected response structure from Unsplash API');
 };
 
-const Login: React.FC = () => {
-  const { setUser } = useUser();
+const SignUp: React.FC = () => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -34,21 +32,16 @@ const Login: React.FC = () => {
     setMounted(true);
   }, []);
 
-  const handleSubmit = async (values: { email: string; password: string }) => {
+  const onFinish = async (values: any) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const response = await login(values.email, values.password);
-
-      if (response.statusCode === 200) {
-        const userData = await fetchUserData(values.email);
-        setUser(userData.data);
-        router.push('/dashboard');
-      } else {
-        setErrorMessage('Login failed. Please check your credentials.');
-      }
+      // Implement your registration logic here
+      console.log('Received values of form: ', values);
+      // If registration is successful, you might want to redirect to login or dashboard
+      // router.push('/login');
     } catch (error: any) {
-      console.log('Error logging in:', error);
-      setErrorMessage(error.response?.data?.error || 'An error occurred during login.');
+      console.log('Error signing up:', error);
+      setErrorMessage(error.response?.data?.error || 'An error occurred during sign up.');
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +64,7 @@ const Login: React.FC = () => {
           <Typography>
             <Title className={styles.title}>Money Tracker</Title>
             <Paragraph>
-              Track your expenses effortlessly and save more with our easy-to-use app. Sign in to get started!
+              Join Money Tracker today and start managing your finances effortlessly!
             </Paragraph>
           </Typography>
 
@@ -79,7 +72,13 @@ const Login: React.FC = () => {
             <Alert message={errorMessage} type="error" showIcon />
           )}
 
-          <Form form={form} onFinish={handleSubmit} layout="vertical" size="large">
+          <Form form={form} onFinish={onFinish} layout="vertical" size="large">
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: 'Please input your username!' }]}
+            >
+              <Input prefix={<UserOutlined />} placeholder="Username" />
+            </Form.Item>
             <Form.Item
               name="email"
               rules={[
@@ -99,14 +98,30 @@ const Login: React.FC = () => {
                 iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
               />
             </Form.Item>
-            <Form.Item>
-              <Link className={styles.forgotPassword} href="#">
-                Forgot Password?
-              </Link>
+            <Form.Item
+              name="confirm"
+              dependencies={['password']}
+              rules={[
+                { required: true, message: 'Please confirm your password!' },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('password') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('The two passwords do not match!'));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder="Confirm Password"
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+              />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={isLoading} block>
-                Sign In
+                Sign Up
               </Button>
             </Form.Item>
           </Form>
@@ -114,11 +129,11 @@ const Login: React.FC = () => {
           <Divider plain>Or</Divider>
 
           <Button icon={<img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" className={styles.googleLogo} />} block>
-            Sign in with Google
+            Sign up with Google
           </Button>
 
-          <Paragraph className={styles.signUpText}>
-            Don't have an account? <Link href="/signup">Sign up</Link>
+          <Paragraph className={styles.loginText}>
+            Already have an account? <Link href="/login">Login</Link>
           </Paragraph>
         </Space>
       </Card>
@@ -135,4 +150,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default SignUp;
