@@ -2,25 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Typography, Button, Divider, Form, Alert, Card, Space, message } from 'antd';
+import { Input, Typography, Button, Divider, Form, Alert, Card, Space, message, Spin } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
-import unsplash from '@/utils/unsplash';
+import unsplash, { fetchRandomImage } from '@/utils/unsplash';
 import { useQuery } from '@tanstack/react-query';
 import { registerUser } from '@/services/authServices';
 
 const { Title, Paragraph, Text, Link } = Typography;
-
-const fetchRandomImage = async () => {
-  const result = await unsplash.photos.getRandom({ query: 'nature' });
-  if (result.errors) {
-    throw new Error(result.errors[0]);
-  }
-  if ('response' in result && 'urls' in result.response) {
-    return result.response.urls.regular;
-  }
-  throw new Error('Unexpected response structure from Unsplash API');
-};
 
 const SignUp: React.FC = () => {
   const [form] = Form.useForm();
@@ -40,6 +29,7 @@ const SignUp: React.FC = () => {
     setSuccessMessage('');
     try {
       const response = await registerUser(values.username, values.email, values.password);
+      // @ts-ignore
       if (response.statusCode === 200) {
         setSuccessMessage('Registration successful! Redirecting to login page...');
         message.success('Registration successful!');
@@ -59,12 +49,16 @@ const SignUp: React.FC = () => {
 
   const { data: imageUrl, error: imageError } = useQuery({
     queryKey: ['randomImage'],
-    queryFn: fetchRandomImage,
+    queryFn: () => fetchRandomImage('technology'),
     staleTime: Infinity,
   });
 
   if (!mounted) {
-    return null; // or a loading spinner
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spin size="large" />
+      </div>
+    );
   }
 
   return (

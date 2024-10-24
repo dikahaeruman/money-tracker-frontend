@@ -1,26 +1,15 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Typography, Button, Divider, Form, Alert, Card, Space } from 'antd';
+import { Input, Typography, Button, Divider, Form, Alert, Card, Space, Spin } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone, MailOutlined, LockOutlined } from '@ant-design/icons';
 import styles from './styles.module.css';
-import unsplash from '@/utils/unsplash';
 import { useQuery } from '@tanstack/react-query';
-import { fetchUserData, login } from '../../services/authServices';
+import { fetchUserData, login } from '@/services/authServices';
 import { useUser } from '@/contexts/UserContext';
+import { fetchRandomImage } from '@/utils/unsplash';
 
 const { Title, Paragraph, Text, Link } = Typography;
-
-const fetchRandomImage = async () => {
-  const result = await unsplash.photos.getRandom({ query: 'nature' });
-  if (result.errors) {
-    throw new Error(result.errors[0]);
-  }
-  if ('response' in result && 'urls' in result.response) {
-    return result.response.urls.regular;
-  }
-  throw new Error('Unexpected response structure from Unsplash API');
-};
 
 const Login: React.FC = () => {
   const { setUser } = useUser();
@@ -39,6 +28,7 @@ const Login: React.FC = () => {
       setIsLoading(true);
       const response = await login(values.email, values.password);
 
+      // @ts-ignore
       if (response.statusCode === 200) {
         const userData = await fetchUserData(values.email);
         setUser(userData.data);
@@ -56,12 +46,16 @@ const Login: React.FC = () => {
 
   const { data: imageUrl, error: imageError } = useQuery({
     queryKey: ['randomImage'],
-    queryFn: fetchRandomImage,
+    queryFn: () => fetchRandomImage('technology'),
     staleTime: Infinity,
   });
 
   if (!mounted) {
-    return null; // or a loading spinner
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spin size="large" />
+      </div>
+    );
   }
 
   return (
@@ -118,7 +112,7 @@ const Login: React.FC = () => {
           </Button>
 
           <Paragraph className={styles.signUpText}>
-            Don't have an account? <Link href="/signup">Sign up</Link>
+            Don&apos;t have an account?  <Link href="/signup">Sign up</Link>
           </Paragraph>
         </Space>
       </Card>

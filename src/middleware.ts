@@ -33,7 +33,7 @@ export default async function middleware(request: NextRequest) {
     try {
       const { statusCode } = await verifyToken(token);
       if (statusCode !== 200) {
-        throw new Error('Invalid token');
+        return NextResponse.redirect(new URL('/login', request.url));
       }
     } catch (error) {
       console.error('Error verifying token:', error);
