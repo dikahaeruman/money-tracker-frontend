@@ -11,7 +11,13 @@ export const login = async (email: string, password: string) => {
             credentials: 'include',
         });
 
-        return response.json();
+        const data = await response.json();
+
+        return {
+            statusCode: response.status,
+            data: data,
+            ok: response.ok
+        };
         
     } catch (error) {
         console.log('Error logging in services:', error);
@@ -64,3 +70,38 @@ export const verifyToken = async (token: string) => {
         };
     }
 }
+
+export const registerUser = async (username: string,email: string, password: string) => {
+    try {
+        const response = await fetch(`${url}/create-user`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, email, password }),
+        });
+        const data = await response.json();
+
+        return {
+            statusCode: response.status,
+            data: data,
+            ok: response.ok
+        };
+    } catch (error) {
+        console.log('Error registering user:', error);
+        return error;
+    }
+}
+
+export const logout = async () => {
+    try {
+      const response = await fetch(`${url}/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      return response.json();
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
+  };

@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Typography, Button, Divider, Form, Alert, Card, Space } from 'antd';
+import { Input, Typography, Button, Divider, Form, Alert, Card, Space, message } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
 import unsplash from '@/utils/unsplash';
 import { useQuery } from '@tanstack/react-query';
+import { registerUser } from '@/services/authServices';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -25,6 +26,7 @@ const SignUp: React.FC = () => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
@@ -34,11 +36,19 @@ const SignUp: React.FC = () => {
 
   const onFinish = async (values: any) => {
     setIsLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
     try {
-      // Implement your registration logic here
-      console.log('Received values of form: ', values);
-      // If registration is successful, you might want to redirect to login or dashboard
-      // router.push('/login');
+      const response = await registerUser(values.username, values.email, values.password);
+      if (response.statusCode === 200) {
+        setSuccessMessage('Registration successful! Redirecting to login page...');
+        message.success('Registration successful!');
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000); // Wait for 3 seconds before redirecting
+      } else {
+        setErrorMessage('Registration failed. Please try again.');
+      }
     } catch (error: any) {
       console.log('Error signing up:', error);
       setErrorMessage(error.response?.data?.error || 'An error occurred during sign up.');
@@ -70,6 +80,10 @@ const SignUp: React.FC = () => {
 
           {errorMessage && (
             <Alert message={errorMessage} type="error" showIcon />
+          )}
+
+          {successMessage && (
+            <Alert message={successMessage} type="success" showIcon />
           )}
 
           <Form form={form} onFinish={onFinish} layout="vertical" size="large">
@@ -108,7 +122,7 @@ const SignUp: React.FC = () => {
                     if (!value || getFieldValue('password') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error('The two passwords do not match!'));
+                    return Promise.reject(new Error('Passwords do not match!'));
                   },
                 }),
               ]}

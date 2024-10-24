@@ -12,7 +12,9 @@ export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('token')?.value;
 
-  if (isPublicPath(pathname) && token) {
+  const isValidToken = token && token.trim() !== '';
+
+  if (isPublicPath(pathname) && isValidToken) {
     try {
       const { statusCode } = await verifyToken(token);
       if (statusCode === 200) {
@@ -24,7 +26,7 @@ export default async function middleware(request: NextRequest) {
   }
 
   if (!isPublicPath(pathname)) {
-    if (!token) {
+    if (!isValidToken) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
