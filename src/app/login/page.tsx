@@ -60,6 +60,15 @@ const Login: React.FC = () => {
 
   return (
     <div className={styles.container}>
+            <div className={styles.imageContainer}>
+        {imageUrl && (
+          <img src={imageUrl} alt="Random nature" className={styles.image} />
+        )}
+        {imageError && (
+          <Text type="danger">Error loading image: {(imageError as Error).message}</Text>
+        )}
+      </div>
+      
       <Card className={styles.formCard}>
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <Typography>
@@ -116,15 +125,6 @@ const Login: React.FC = () => {
           </Paragraph>
         </Space>
       </Card>
-
-      <div className={styles.imageContainer}>
-        {imageUrl && (
-          <img src={imageUrl} alt="Random nature" className={styles.image} />
-        )}
-        {imageError && (
-          <Text type="danger">Error loading image: {(imageError as Error).message}</Text>
-        )}
-      </div>
     </div>
   );
 };
