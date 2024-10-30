@@ -8,7 +8,6 @@ export async function POST(request: Request) {
       email,
       password,
     });
-
     return NextResponse.json(response.data, {
       status: 200,
       headers: {
