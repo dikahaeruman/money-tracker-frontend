@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import AnalyticsCard from "../components/AnalyticsCard"
-import ChartComponent from '../components/Chart';
+import AnalyticsCard from "@/app/components/AnalyticsCard"
+import ChartComponent from '@/app/components/Chart';
 
 const generateRandomData = (numPoints: number, min: number, max: number) => {
     return Array.from({ length: numPoints }, () => Math.floor(Math.random() * (max - min + 1)) + min);

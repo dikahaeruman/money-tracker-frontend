@@ -1,6 +1,6 @@
 "use client"
+import { accountsData } from '@/data/accountData';
 import React from 'react';
-import { accountsData } from '../../data/accountData';
 
 
 const AccountPocket = () => {

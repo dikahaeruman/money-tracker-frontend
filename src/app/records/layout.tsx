@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import '../../app/globals.css';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -30,7 +31,7 @@ export default function RootLayout({
         <meta name="description" content={description} />
       </head>
       <body className={inter.className}>
-        <Header title="Dashboard" user="Ilyas Abduttawab" status="Premium" />
+        <Header title="Records" user="Ilyas Abduttawab" status="Premium" />
         {children}
       </body>
     </html>

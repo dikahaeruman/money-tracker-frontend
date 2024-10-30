@@ -5,8 +5,8 @@ import { Input, Typography, Button, Divider, Form, Alert } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
 import unsplash from '@/utils/unsplash';
-import Image from 'next/image'
-import {login} from '../../services/authServices';
+import Image from 'next/image';
+import { login } from '../../services/authServices'; // Adjusted import path
 
 const { Title, Paragraph, Text, Link } = Typography;
 
