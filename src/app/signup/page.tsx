@@ -7,7 +7,6 @@ import { UserOutlined, LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoT
 import styles from './styles.module.css';
 import unsplash, { fetchRandomImage } from '@/utils/unsplash';
 import { useQuery } from '@tanstack/react-query';
-import { registerUser } from '@/services/authServices';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -28,7 +27,7 @@ const SignUp: React.FC = () => {
     setErrorMessage('');
     setSuccessMessage('');
     try {
-      const response = await registerUser(values.username, values.email, values.password);
+      // const response = await registerUser(values.username, values.email, values.password);
       // @ts-ignore
       if (response.statusCode === 200) {
         setSuccessMessage('Registration successful! Redirecting to login page...');
@@ -68,7 +67,7 @@ const SignUp: React.FC = () => {
           <img src={imageUrl} alt="Random nature" className={styles.image} />
         )}
         {imageError && (
-          <Text type="danger">Error loading image: {(imageError as Error).message}</Text>
+          <Text type="danger">Error loading image: {imageError.message}</Text>
         )}
       </div>
       <Card className={styles.formCard}>

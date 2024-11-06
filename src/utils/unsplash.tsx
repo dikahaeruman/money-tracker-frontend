@@ -9,9 +9,8 @@ const unsplash = createApi({
 export const fetchRandomImage = async (query: string = 'nature'): Promise<string> => {
   try {
     const result = await unsplash.photos.getRandom({ query });
-
-    // @ts-ignore
-    if ('response' in result && 'urls' in result.response) {
+    
+    if ('response' in result && result.response && 'urls' in result.response) {
       return result.response.urls.regular;
     } else {
       console.error('Unexpected response structure from Unsplash API:', result);

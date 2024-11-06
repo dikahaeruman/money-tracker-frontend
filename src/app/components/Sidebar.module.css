@@ -1,0 +1,12 @@
+.logo {
+    color: #4f6f52;
+    margin: 40px 0;
+    font-size: 3rem;
+}
+
+.menuBar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: 500;
+}

@@ -1,44 +1,44 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { verifyToken } from '@/services/authServices';
+import { cookies } from 'next/headers';
 
 const PUBLIC_PATHS = ['/login', '/signup', '/forgot-password'];
-const STATIC_PATHS = ['/api', '/_next', '/auth', '/favicon.ico', '/robots.txt', '/images', '/assets'];
 
 function isPublicPath(path: string): boolean {
-  return PUBLIC_PATHS.includes(path) || STATIC_PATHS.some(prefix => path.startsWith(prefix));
+  return PUBLIC_PATHS.includes(path);
+}
+
+async function verifyToken(): Promise<boolean> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/verify`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: cookies().toString()
+      },
+      credentials: 'include',
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    return false;
+  }
 }
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get('token')?.value;
-
+  const token = cookies().get('token')?.value;
   const isValidToken = token && token.trim() !== '';
 
-  if (isPublicPath(pathname) && isValidToken) {
-    try {
-      const { statusCode } = await verifyToken(token);
-      if (statusCode === 200) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-    } catch (error) {
-      console.error('Error verifying token:', error);
-    }
+  if (pathname.startsWith('/api')) {
+    return NextResponse.next();
   }
 
-  if (!isPublicPath(pathname)) {
-    if (!isValidToken) {
-      return NextResponse.redirect(new URL('/login', request.url));
+  if (isPublicPath(pathname)) {
+    if (isValidToken && await verifyToken()) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
-
-    try {
-      const { statusCode } = await verifyToken(token);
-      if (statusCode !== 200) {
-        return NextResponse.redirect(new URL('/login', request.url));
-      }
-    } catch (error) {
-      console.error('Error verifying token:', error);
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
+  } else if (!isValidToken || !(await verifyToken())) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return NextResponse.next();

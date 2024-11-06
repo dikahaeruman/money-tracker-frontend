@@ -1,7 +1,12 @@
 'use client';
 
-import { UserProvider } from '../contexts/UserContext';
+import { UserProvider } from '@/contexts/UserContext';
+import React from 'react';
 
-export function Providers({ children }: { children: React.ReactNode }) {
+type ProvidersProps = Readonly<{
+  children: React.ReactNode;
+}>;
+
+export function Providers({ children }: ProvidersProps) {
   return <UserProvider>{children}</UserProvider>;
 }

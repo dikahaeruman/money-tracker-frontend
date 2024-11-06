@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useMemo } from 'react';
 
 interface UserContextType {
   user: User | null;
@@ -9,6 +9,8 @@ interface User {
   email: string;
   id: string;
   username: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -16,8 +18,10 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
+  const contextValue = useMemo(() => ({ user, setUser }), [user]);
+
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );
