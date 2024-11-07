@@ -21,6 +21,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { fetchRandomImage } from '@/utils/unsplash';
 import styles from './page.module.css';
+import { useUser } from '@/contexts/UserContext';
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -33,7 +34,7 @@ const Login: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-
+  const { refreshUser } = useUser();
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -42,6 +43,7 @@ const Login: React.FC = () => {
     queryKey: ['randomImage'],
     queryFn: () => fetchRandomImage('technology'),
     staleTime: Infinity,
+    enabled: mounted,
   });
 
   const handleSubmit = useCallback(
@@ -61,7 +63,7 @@ const Login: React.FC = () => {
           setErrorMessage('Login failed. Please check your credentials.');
           return;
         }
-
+        await refreshUser();
         router.push('/dashboard');
       } catch (error) {
         console.error('Error logging in:', error);
@@ -74,7 +76,7 @@ const Login: React.FC = () => {
         setIsLoading(false);
       }
     },
-    [router],
+    [router, refreshUser],
   );
 
   if (!mounted) {

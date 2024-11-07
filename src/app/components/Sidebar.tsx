@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Menu } from 'antd';
+import { Flex, Menu, MenuProps } from 'antd';
 import {
   HomeOutlined,
   RocketOutlined,
@@ -7,7 +7,19 @@ import {
 } from '@ant-design/icons';
 import styles from './Sidebar.module.css';
 
-const Sidebar = () => {
+interface SidebarProps {
+  onMenuSelect: (key: string) => void;
+}
+
+const Sidebar : React.FC<SidebarProps> = ({onMenuSelect}) => {
+  const handleMenuSelect = (key: string) => {
+    onMenuSelect(key);
+  }
+
+  const onClick: MenuProps['onClick'] = ({key}) => {
+    handleMenuSelect(key);
+  };
+
   return (
     <>
       <Flex align="center" justify="center">
@@ -18,16 +30,17 @@ const Sidebar = () => {
 
       <Menu
         mode="inline"
-        defaultSelectedKeys={['1']}
+        defaultSelectedKeys={['dashboard']}
         className={styles.menuBar}
+        onClick={onClick}
         items={[
           {
-            key: '1',
+            key: 'dashboard',
             icon: <HomeOutlined />,
             label: 'Dashboard',
           },
           {
-            key: '2',
+            key: 'settings',
             icon: <SettingOutlined />,
             label: 'Settings',
           },

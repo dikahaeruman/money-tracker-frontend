@@ -6,6 +6,7 @@
 
 .menuBar {
     display: flex;
+    height: 100vh;
     flex-direction: column;
     gap: 10px;
     font-weight: 500;

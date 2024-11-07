@@ -3,6 +3,7 @@ body {
   padding: 0;
   background-color: #f0f2f5;
   font-family: 'Poppins', sans-serif;
+  /*overflow: hidden;*/
 }
 
 .ant-menu-item-selected {
@@ -22,4 +23,36 @@ body {
 .ant-btn-primary:hover {
   background-color: #173a1a !important;
   color: #ffffff !important;
+}
+
+.primary--color {
+  color: #4f6f52;
+}
+
+.primary--light--color {
+  color: #86a789;
+}
+
+.secondary--color {
+  color: #86a789;
+}
+
+.light--color {
+  color: #d2e3c8;
+}
+
+.gray--color {
+  color: rgb(182, 181, 181) !important;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

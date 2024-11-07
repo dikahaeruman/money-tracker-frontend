@@ -6,3 +6,8 @@
     color: #4f6f52;
     cursor: pointer;
 }
+
+.avatarMenu {
+    margin-left: 10px;
+    cursor: pointer;
+}
