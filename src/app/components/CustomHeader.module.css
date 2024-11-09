@@ -1,0 +1,13 @@
+.headerIcon {
+    background: #d2e3c8;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 15px;
+    color: #4f6f52;
+    cursor: pointer;
+}
+
+.avatarMenu {
+    margin-left: 10px;
+    cursor: pointer;
+}
