@@ -17,7 +17,7 @@
       "eslint --fix"
     ],
     "*.ts": [
-      "tslint --fix 'src/**/*.ts'"
+      "tslint --fix"
     ],
     "*.md": [
       "prettier --write"
