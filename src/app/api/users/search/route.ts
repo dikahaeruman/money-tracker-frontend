@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 export async function POST(request: Request) {
   try {
     const { email } = await request.json();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/search`, {
+    const response = await fetch(`${process.env.BASE_URL}/users/search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

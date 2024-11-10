@@ -19,7 +19,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await fetch('/api/users', { credentials: 'include' });
       if (response.ok) {
         const userData = await response.json();
-        setUser(userData);
+        setUser(userData.data);
       } else {
         // Handle non-OK responses (e.g., unauthorized)
         setUser(null);

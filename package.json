@@ -17,6 +17,7 @@
     "axios": "^1.7.2",
     "chart.js": "^4.4.5",
     "chartjs": "^0.3.24",
+    "cookies-next": "^4.3.0",
     "next": "^14.2.17",
     "react": "^18",
     "react-dom": "^18",
