@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`, {
+    const response = await fetch(`${process.env.BASE_URL}/auth/logout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

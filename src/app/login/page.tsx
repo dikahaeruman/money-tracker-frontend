@@ -58,7 +58,6 @@ const Login: React.FC = () => {
           body: JSON.stringify(values),
           credentials: 'include',
         });
-
         if (!loginResponse.ok) {
           setErrorMessage('Login failed. Please check your credentials.');
           return;

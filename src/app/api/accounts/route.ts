@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/accounts`,
+      `${process.env.BASE_URL}/accounts`,
       {
         method: 'GET',
         headers: {
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const { name, balance, currency } = await request.json();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/accounts`,
+      `${process.env.BASE_URL}/accounts`,
       {
         method: 'POST',
         headers: {

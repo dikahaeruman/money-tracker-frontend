@@ -20,7 +20,6 @@ const CustomHeader: React.FC<CustomHeaderProps> = () => {
   const router = useRouter();
   const {user, setUser} = useUser();
   const queryClient = useQueryClient();
-
   const items: MenuProps['items'] = [
     {
       label: `${user?.username} - ${user?.email}`,
