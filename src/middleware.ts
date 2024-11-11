@@ -72,14 +72,14 @@ export default async function middleware(request: NextRequest) {
     if (isValidToken && await verifyToken()) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
-  } 
+  }
 
   // If the token is invalid or not present, attempt to refresh it
   if (!isValidToken) {
     if (refreshToken && refreshToken.trim() !== '') {
       const refreshResult = await refreshAccessToken(refreshToken); // Call the refresh function
       if (refreshResult) {
-        const { setCookieHeader, newToken } = refreshResult;
+        const { setCookieHeader } = refreshResult;
 
         // Create a response object
         const response = NextResponse.next();
@@ -88,15 +88,11 @@ export default async function middleware(request: NextRequest) {
         if (setCookieHeader) {
           setCookiesFromHeader(request,setCookieHeader); // Use the utility function to set cookies
         }
-        if (newToken) {
-          response.headers.append('Set-Cookie', `token=${newToken}; Path=/; HttpOnly; Max-Age=86400`); // Set the new token cookie
-        }
-
 
         return response; // Return the modified response
       }
     }
-    
+
     // If refresh fails or no refresh_token, redirect to login
     return NextResponse.redirect(new URL('/login', request.url));
   }
