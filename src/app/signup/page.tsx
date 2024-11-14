@@ -2,13 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Typography, Button, Divider, Form, Alert, Card, Space, message, Spin } from 'antd';
+import { Input, Typography, Button, Divider, Form, Alert, Card, Space, Spin } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import styles from './styles.module.css';
-import unsplash, { fetchRandomImage } from '@/utils/unsplash';
+import { fetchRandomImage } from '@/utils/unsplash';
 import { useQuery } from '@tanstack/react-query';
 
+
 const { Title, Paragraph, Text, Link } = Typography;
+
+const PasswordIconRender: React.FC<{ visible: boolean }> = ({ visible }) => {
+  const renderVisibleIcon = () => <EyeTwoTone />;
+  const renderInvisibleIcon = () => <EyeInvisibleOutlined />;
+
+  return visible ? renderVisibleIcon() : renderInvisibleIcon();
+};
 
 const SignUp: React.FC = () => {
   const [form] = Form.useForm();
@@ -27,11 +35,13 @@ const SignUp: React.FC = () => {
     setErrorMessage('');
     setSuccessMessage('');
     try {
-      // const response = await registerUser(values.username, values.email, values.password);
-      // @ts-ignore
-      if (response.statusCode === 200) {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      })
+      if (response.status === 201) {
         setSuccessMessage('Registration successful! Redirecting to login page...');
-        message.success('Registration successful!');
         setTimeout(() => {
           router.push('/login');
         }, 3000); // Wait for 3 seconds before redirecting
@@ -59,6 +69,10 @@ const SignUp: React.FC = () => {
       </div>
     );
   }
+
+  const renderPasswordIcon = (visible: boolean) => (
+    <PasswordIconRender visible={visible} />
+  );
 
   return (
     <div className={styles.container}>
@@ -110,7 +124,7 @@ const SignUp: React.FC = () => {
               <Input.Password
                 prefix={<LockOutlined />}
                 placeholder="Password"
-                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                iconRender={renderPasswordIcon}
               />
             </Form.Item>
             <Form.Item
@@ -130,8 +144,8 @@ const SignUp: React.FC = () => {
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="Confirm Password"
-                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                placeholder="Password"
+                iconRender={renderPasswordIcon}
               />
             </Form.Item>
             <Form.Item>
