@@ -1,4 +1,3 @@
-"use server"
 import { NextResponse, NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { setCookiesFromHeader } from './utils/cookieUtils';
@@ -11,7 +10,7 @@ function isPublicPath(path: string): boolean {
 
 async function verifyToken(): Promise<boolean> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/verify`, {
+    const response = await fetch(`${process.env.BASE_URL}/verify`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -36,12 +35,10 @@ async function refreshAccessToken(refreshToken: string) {
   });
 
   if (response.ok) {
-    const data = await response.json(); // Parse the JSON response
-    const setCookieHeader = response.headers.get("set-cookie"); // Use get() to retrieve the header
+    const data = await response.json();
+    const setCookieHeader = response.headers.get("set-cookie");
 
-    // Check if the response contains a new token
     if (data.status === "success" && data.data.token) {
-      // Return the new token and set-cookie header
       return {
         setCookieHeader,
         newToken: data.data.token,
@@ -49,7 +46,7 @@ async function refreshAccessToken(refreshToken: string) {
     }
   }
 
-  return null; // Indicate failure
+  return null;
 }
 
 export default async function middleware(request: NextRequest) {
@@ -59,11 +56,6 @@ export default async function middleware(request: NextRequest) {
 
   const isValidToken = token && token.trim() !== '';
 
-  // Prevent redirect loops by checking if already on login or set-cookies page
-  if (pathname === '/login') {
-    return NextResponse.next();
-  }
-
   if (pathname.startsWith('/api')) {
     return NextResponse.next();
   }
@@ -72,28 +64,22 @@ export default async function middleware(request: NextRequest) {
     if (isValidToken && await verifyToken()) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
+    return NextResponse.next();
   }
 
-  // If the token is invalid or not present, attempt to refresh it
-  if (!isValidToken) {
-    if (refreshToken && refreshToken.trim() !== '') {
-      const refreshResult = await refreshAccessToken(refreshToken); // Call the refresh function
-      if (refreshResult) {
-        const { setCookieHeader } = refreshResult;
-
-        // Create a response object
-        const response = NextResponse.next();
-
-        // Set the cookies directly in the response
-        if (setCookieHeader) {
-          setCookiesFromHeader(request,setCookieHeader); // Use the utility function to set cookies
-        }
-
-        return response; // Return the modified response
+  if (!isValidToken && refreshToken && refreshToken.trim() !== '') {
+    const refreshResult = await refreshAccessToken(refreshToken);
+    if (refreshResult) {
+      const { setCookieHeader } = refreshResult;
+      const response = NextResponse.next();
+      if (setCookieHeader) {
+        setCookiesFromHeader(request, setCookieHeader);
       }
+      return response;
     }
+  }
 
-    // If refresh fails or no refresh_token, redirect to login
+  if (!isValidToken) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
