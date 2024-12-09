@@ -1,5 +1,11 @@
 import { Account } from '@/types/Account';
 
+interface Currency {
+  id: number;
+  code: string;
+  name: string;
+}
+
 export const fetchAccounts = async (): Promise<Account[]> => {
   const response = await fetch('/api/accounts', {
     method: 'GET',
@@ -36,3 +42,18 @@ export const deleteAccount = async (accountId: string): Promise<void> => {
     credentials: 'include',
   });
 }
+
+export const fetchCurrencies = async (): Promise<Currency[]> => {
+  const response = await fetch('/api/currencies', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.data;
+};
