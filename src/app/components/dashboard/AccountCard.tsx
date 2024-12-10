@@ -54,8 +54,14 @@ const AccountCard: React.FC<AccountCardProps> = ({ account, onDelete }) => {
         hoverable
       >
           <Space direction="vertical">
-              <Text strong>Balance: {formatCurrency(account.balance, account.currency)}</Text>
-              <Text type="secondary">Created Date: {formatDate(account.created_at)}</Text>
+              <Text strong>{formatCurrency(account.balance, account.currency_code)}</Text>
+              { account.currency_code != "IDR" ?
+                <Text strong style={{ fontSize: 'smaller' }}>({formatCurrency(account.converted_balance, "IDR")})</Text>
+                :
+                <br></br>
+
+              }
+              <Text type="secondary">Last Updated: {formatDate(account.updated_at)}</Text>
           </Space>
       </Card>
     );

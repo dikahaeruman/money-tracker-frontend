@@ -3,6 +3,6 @@ export interface Account {
   user_id: number;
   account_name: string;
   balance: number;
-  currency: string;
+  currency: number;
   created_at: string;
 }

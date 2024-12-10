@@ -99,11 +99,11 @@ const DashboardContent: React.FC = () => {
     },
     [refetch, queryClient],
   );
-
-  const pieData = accounts?.map(account => ({
+  
+  const pieData =  Array.isArray(accounts) ? accounts.map(account => ({
     name: account.account_name,
     value: account.balance,
-  })) || [];
+  })) : [];
 
   const config = {
     appendPadding: 10,
