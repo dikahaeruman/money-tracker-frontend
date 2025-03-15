@@ -71,9 +71,9 @@ const DashboardContent: React.FC = () => {
       setIsSubmitting(true);
       const values = await form.validateFields();
       await createAccount({
-        name: values.name,
+        account_name: values.name,
         balance: values.balance,
-        currency: values.currency,
+        currency_id: values.currency,
       });
 
       setIsModalOpen(false);
@@ -185,7 +185,7 @@ const AccountForm: React.FC<{ form: any }> = ({ form }) => {
     queryKey: ['currencies'],
     queryFn: fetchCurrencies,
   });
-
+  console.log("currencies", currencies)
   return (
     <Form form={form} layout="vertical" name="addAccount">
       <Form.Item
@@ -226,7 +226,7 @@ const AccountForm: React.FC<{ form: any }> = ({ form }) => {
             loading={isLoadingCurrencies}
             options={currencies?.map(curr => ({
               label: `${curr.code} - ${curr.name}`,
-              value: curr.code,
+              value: curr.id,
             }))}
           />
         </Form.Item>

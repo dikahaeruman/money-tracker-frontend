@@ -21,6 +21,7 @@ export const fetchAccounts = async (): Promise<Account[]> => {
 };
 
 export const createAccount = async (accountData: any): Promise<Account> => {
+
   const response = await fetch('/api/accounts', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -30,10 +31,13 @@ export const createAccount = async (accountData: any): Promise<Account> => {
 
   if (!response.ok) {
     const errorData = await response.json();
+    console.log("errorData", errorData)
+
     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
   }
+  const data = await response.json()
 
-  return response.json();
+  return data;
 };
 
 export const deleteAccount = async (accountId: string): Promise<void> => {

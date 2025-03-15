@@ -21,7 +21,6 @@ const formatDate = (dateString: string): string => {
     }) + ', ' + date.toLocaleTimeString('en-GB', {
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
         hour12: false
     });
 };
@@ -61,7 +60,9 @@ const AccountCard: React.FC<AccountCardProps> = ({ account, onDelete }) => {
                 <br></br>
 
               }
-              <Text type="secondary">Last Updated: {formatDate(account.updated_at)}</Text>
+            <Text type="secondary" style={{ fontSize: '12px', display: 'block', textAlign: 'left' }}>
+            Last Updated: {formatDate(account.updated_at)}
+            </Text>
           </Space>
       </Card>
     );
