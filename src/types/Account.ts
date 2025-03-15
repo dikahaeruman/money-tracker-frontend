@@ -3,6 +3,9 @@ export interface Account {
   user_id: number;
   account_name: string;
   balance: number;
-  currency: string;
+  converted_balance: number;
+  currency_id: number;
+  currency_code: string;
   created_at: string;
+  updated_at: string;
 }

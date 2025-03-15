@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const response = await fetch(
+    const apiResponse = await fetch(
       `${process.env.BASE_URL}/accounts`,
       {
         method: 'GET',
@@ -15,7 +15,7 @@ export async function GET() {
       },
     ).then((response) => response.json());
 
-    return NextResponse.json(response.data, {
+    return NextResponse.json(apiResponse.data, {
       status: 200,
     });
   } catch (error: any) {
@@ -29,9 +29,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { name, balance, currency } = await request.json();
+    const { account_name, balance, currency_id } = await request.json();
 
-    const response = await fetch(
+    const apiResponse = await fetch(
       `${process.env.BASE_URL}/accounts`,
       {
         method: 'POST',
@@ -40,13 +40,16 @@ export async function POST(request: Request) {
           Cookie: cookies().toString(),
         },
         credentials: 'include',
-        body: JSON.stringify({ account_name: name, balance, currency }),
-      },
-    ).then((response) => response.json());
+        body: JSON.stringify({ account_name, balance, currency_id }),
+      }
+    );
 
-    return NextResponse.json(response.data, {
-      status: 200,
+    const jsonResponse = await apiResponse.json();
+
+    return NextResponse.json(jsonResponse, {
+      status: apiResponse.status,
     });
+
   } catch (error: any) {
     console.log('Error:', error);
     return NextResponse.json(
