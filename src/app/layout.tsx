@@ -8,6 +8,7 @@ import '@fontsource/roboto/700.css';
 import { Providers } from './providers'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react';
+import { Toaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient()
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body>
         <QueryClientProvider client={queryClient}>
         <Providers>{children}</Providers>
+        <Toaster />
       </QueryClientProvider>
       </body>
     </html>

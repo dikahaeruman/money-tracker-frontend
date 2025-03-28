@@ -1,16 +1,20 @@
+'use client';
+
 import React from 'react';
-import { Avatar, Dropdown, Flex, MenuProps, Typography } from 'antd';
-import Search from 'antd/es/input/Search';
-import {
-  LogoutOutlined,
-  MessageOutlined,
-  NotificationOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import styles from './CustomHeader.module.css';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
 import { useQueryClient } from '@tanstack/react-query';
+import { MessageCircle, Bell, LogOut, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface CustomHeaderProps {
   username?: string;
@@ -18,31 +22,8 @@ interface CustomHeaderProps {
 
 const CustomHeader: React.FC<CustomHeaderProps> = () => {
   const router = useRouter();
-  const {user, setUser} = useUser();
+  const { user, setUser } = useUser();
   const queryClient = useQueryClient();
-  const items: MenuProps['items'] = [
-    {
-      label: `${user?.username} - ${user?.email}`,
-      key: 'profile',
-      disabled: true,
-    },
-    {
-      type: 'divider'
-    },
-    {
-      label: 'Logout',
-      key: '1',
-      icon: <LogoutOutlined />,
-    },
-  ];
-
-  const onClick: MenuProps['onClick'] = ({ key }) => {
-    if (key === '1') {
-      logoutHandler().catch((error) => {
-        console.error('Error during logout:', error);
-      });
-    }
-  };
 
   const logoutHandler = async () => {
     try {
@@ -51,7 +32,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include'
+        credentials: 'include',
       });
       if (response.ok) {
         setUser(null);
@@ -64,28 +45,49 @@ const CustomHeader: React.FC<CustomHeaderProps> = () => {
     } catch (error) {
       console.error('Error logging out:', error);
     }
-  }
+  };
 
   return (
-    <Flex align="center" justify="space-between">
-      <Typography.Title level={3} type="secondary">
+    <div className="flex items-center justify-between p-4">
+      <h3 className="text-2xl font-semibold text-muted-foreground">
         Money Tracker
-      </Typography.Title>
+      </h3>
 
-      <Flex align="center" gap="3rem">
-        <Search placeholder="Search Dashboard" allowClear />
+      <div className="flex items-center gap-12">
+        <Input placeholder="Search Dashboard" className="w-[200px]" />
 
-        <Flex align="center" gap="10px">
-          <MessageOutlined className={styles.headerIcon} />
-          <NotificationOutlined className={styles.headerIcon} />
-          <Dropdown menu={{ items, onClick }} className={styles.avatarMenu}>
-            <span>
-              <Avatar icon={<UserOutlined />} />
-            </span>
-          </Dropdown>
-        </Flex>
-      </Flex>
-    </Flex>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={() => {}}>
+            <MessageCircle className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={() => {}}>
+            <Bell className="h-5 w-5" />
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <button className="relative h-9 w-9 rounded-full p-0 cursor-pointer">
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback>
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem disabled>
+                {user?.username} - {user?.email}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logoutHandler}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </div>
   );
 };
 

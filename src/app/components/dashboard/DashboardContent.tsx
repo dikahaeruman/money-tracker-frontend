@@ -1,237 +1,223 @@
-import React, { useCallback, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useCallback, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Pie } from "@ant-design/charts";
+import { Banknote, Plus, X } from "lucide-react";
+import { Account } from "@/types/Account";
+import { createAccount, deleteAccount, fetchAccounts, fetchCurrencies } from "@/utils/api";
+import { useUser } from "@/contexts/UserContext";
+import AccountList from "@/app/components/dashboard/AccountList";
+import { Button } from "@/components/ui/button";
 import {
-  Button,
-  Col,
-  Divider,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  AlertDialogCancel,
+  AlertDialogAction
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import {
   Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  Row,
-  Space,
-  Spin,
-  Typography,
-  Card,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
   Select,
-} from 'antd';
-import { Pie } from '@ant-design/charts';
-import { BankOutlined, DollarOutlined, PlusOutlined } from '@ant-design/icons';
-import { Account } from '@/types/Account';
-import { createAccount, deleteAccount, fetchAccounts, fetchCurrencies } from '@/utils/api';
-import { useUser } from '@/contexts/UserContext';
-import AccountList from '@/app/components/dashboard/AccountList';
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Spinner } from "@/components/ui/spinner";
 
-const { Title } = Typography;
-
-type FieldType = {
-  name: string;
-  balance: number;
-  currency: string;
-};
-
-type Currency = {
-  id: number;
-  code: string;
-  name: string;
-};
-
-const formatCurrency = (value: number, currency: string): string => {
-  if (currency === 'IDR') {
-      return `Rp ${value.toLocaleString('id-ID')}`;
-  }
-  return `${value.toFixed(2)} ${currency}`;
-};
+const formSchema = z.object({
+  name: z.string().min(1, "Account name is required"),
+  balance: z.coerce.number().min(0, "Balance must be positive"),
+  currency: z.string().min(1, "Currency is required"),
+});
 
 const DashboardContent: React.FC = () => {
   const { user } = useUser();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [form] = Form.useForm<FieldType>();
+  const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: { name: "", balance: undefined, currency: "" },
+  });
 
-  const {
-    data: accounts,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<Account[], Error>({
-    queryKey: ['accounts', user?.id],
+  const { data: accounts, isLoading, error, refetch } = useQuery({
+    queryKey: ["accounts", user?.id],
     queryFn: fetchAccounts,
-    staleTime: Infinity,
     enabled: !!user,
   });
 
-  const handleModalOpen = useCallback(() => setIsModalOpen(true), []);
-  const handleModalClose = useCallback(() => setIsModalOpen(false), []);
-
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = async (values) => {
     try {
-      setIsSubmitting(true);
-      const values = await form.validateFields();
       await createAccount({
         account_name: values.name,
-        balance: values.balance,
-        currency_id: values.currency,
+        balance: Number(values.balance), // Ensure it's a number
+        currency_id: parseInt(values.currency, 10), // Ensure it's an integer
       });
-
-      setIsModalOpen(false);
-      form.resetFields();
-      message.success('Account created successfully');
-
+      setIsOpen(false);
+      form.reset();
+      toast.success("Account created successfully");
       await refetch();
-      await queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      await queryClient.invalidateQueries(["accounts"]);
     } catch (error) {
-      console.error('Error creating account:', error);
-      message.error('Failed to create account. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      toast.error("Failed to create account");
     }
-  }, [form, refetch, queryClient]);
-
-  const onDeleteAccount = useCallback(
-    async (accountId: string) => {
-      await deleteAccount(accountId);
-      message.success('Account deleted successfully');
-      await refetch();
-      await queryClient.invalidateQueries({ queryKey: ['accounts'] });
-    },
-    [refetch, queryClient],
-  );
-  
-  const pieData =  Array.isArray(accounts) ? accounts.map(account => ({
-    name: account.account_name,
-    value: account.balance,
-  })) : [];
-
-  const config = {
-    appendPadding: 10,
-    data: pieData,
-    angleField: 'value',
-    colorField: 'name',
-    radius: 0.75,
-    label: false,
-    tooltip: {
-      title: 'name',
-      formatter: (datum: any) => ({
-        name: datum.name,
-        value: formatCurrency(datum.value, 'IDR')
-      })
-    },
-    legend: {
-      position: 'bottom',
-    },
   };
 
+  const onDeleteAccount = useCallback(async (accountId) => {
+    try {
+      await deleteAccount(accountId);
+      toast.success("Account deleted successfully");
+      await refetch();
+      await queryClient.invalidateQueries(["accounts"]);
+    } catch (error) {
+      toast.error("Failed to delete account");
+    }
+  }, [refetch, queryClient]);
+
+  const { data: currencies } = useQuery({ queryKey: ["currencies"], queryFn: fetchCurrencies });
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center text-destructive">
+        Error: {error.message}
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: '24px' }}>
-      <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
-        <Title level={2}>Your Accounts</Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleModalOpen}
-          disabled={isSubmitting}
-        >
-          Add Account
-        </Button>
-      </Row>
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-semibold">Your Accounts</h2>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+          <AlertDialogTrigger>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" /> Add Account
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Add New Account</AlertDialogTitle>
+            </AlertDialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Account Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Emergency Fund" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="balance"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Initial Balance</FormLabel>
+                      <FormControl>
+                      <Input 
+                        type="number" 
+                        placeholder="0" 
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === "" ? undefined : parseFloat(value)); // Allows empty input
+                        }}
+                      />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {currencies?.map(curr => (
+                            <SelectItem key={curr.id} value={curr.id.toString()}>
+                              {curr.code} - {curr.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex justify-end gap-3 pt-4">
+                  <AlertDialogCancel asChild>
+                    <Button variant="outline" onClick={() => form.reset()}>
+                      Cancel
+                    </Button>
+                  </AlertDialogCancel>
+                  <Button type="submit" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? (
+                      <>
+                        <Spinner size="sm" className="mr-2" />
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Account
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
 
-      {isLoading ? (
-        <div style={{ textAlign: 'center', padding: '50px' }}>
-          <Spin size="large" />
-        </div>
-      ) : error ? (
-        <div>Error: {error.message}</div>
-      ) : (
-        <>
-          <Row gutter={[24, 24]}>
-            <Col xs={24} lg={12}>
-              <AccountList accounts={accounts || []} onDeleteAccount={onDeleteAccount} />
-            </Col>
-            <Col xs={24} lg={12}>
-              <Card title="Account Balance Distribution">
-                {accounts && accounts.length > 0 ? (
-                  <Pie {...config} />
-                ) : (
-                  <div style={{ textAlign: 'center', padding: '50px' }}>
-                    No accounts to display
-                  </div>
-                )}
-              </Card>
-            </Col>
-          </Row>
-        </>
-      )}
-
-      <Modal
-        title="Add New Account"
-        open={isModalOpen}
-        onOk={handleSubmit}
-        onCancel={handleModalClose}
-        confirmLoading={isSubmitting}
-        okText="Add Account"
-        cancelText="Cancel"
-      >
-        <AccountForm form={form} />
-      </Modal>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AccountList accounts={accounts || []} onDeleteAccount={onDeleteAccount} />
+        <Card>
+          <CardHeader>
+            <CardTitle>Account Balance Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {accounts?.length ? <Pie data={accounts.map(({ account_name, balance }) => ({ name: account_name, value: balance }))} angleField="value" colorField="name" radius={0.75} label={false} legend={{ position: "bottom" }} /> : <div className="text-center py-12">No accounts to display</div>}
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  );
-};
-
-const AccountForm: React.FC<{ form: any }> = ({ form }) => {
-  const { data: currencies, isLoading: isLoadingCurrencies } = useQuery<Currency[]>({
-    queryKey: ['currencies'],
-    queryFn: fetchCurrencies,
-  });
-  console.log("currencies", currencies)
-  return (
-    <Form form={form} layout="vertical" name="addAccount">
-      <Form.Item
-        name="name"
-        label="Account Name"
-        rules={[{ required: true, message: 'Please enter the account name' }]}
-      >
-        <Input prefix={<BankOutlined />} placeholder="Enter account name" />
-      </Form.Item>
-      <Space align="start">
-        <Form.Item
-          name="balance"
-          label="Initial Balance"
-          rules={[
-            { required: true, message: 'Please enter the initial balance' },
-          ]}
-        >
-          <InputNumber
-            prefix={<DollarOutlined />}
-            placeholder="0"
-            style={{ width: '200px' }}
-            formatter={(value) =>
-              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            }
-            parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
-          />
-        </Form.Item>
-        <Form.Item
-          name="currency"
-          label="Currency"
-          rules={[
-            { required: true, message: 'Please select the currency' },
-          ]}
-        >
-          <Select
-            style={{ width: '200px' }}
-            placeholder="Select Currency"
-            loading={isLoadingCurrencies}
-            options={currencies?.map(curr => ({
-              label: `${curr.code} - ${curr.name}`,
-              value: curr.id,
-            }))}
-          />
-        </Form.Item>
-      </Space>
-    </Form>
   );
 };
 
