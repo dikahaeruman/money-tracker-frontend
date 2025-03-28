@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Pie } from "@ant-design/charts";
 import { Banknote, Plus, X } from "lucide-react";
 import { Account } from "@/types/Account";
-import { createAccount, deleteAccount, fetchAccounts, fetchCurrencies } from "@/utils/api";
+import { createAccount, deleteAccount, fetchAccounts,fetchCurrencies } from "@/utils/api";
 import { useUser } from "@/contexts/UserContext";
 import AccountList from "@/app/components/dashboard/AccountList";
 import { Button } from "@/components/ui/button";
@@ -54,7 +54,7 @@ const DashboardContent: React.FC = () => {
     defaultValues: { name: "", balance: undefined, currency: "" },
   });
 
-  const { data: accounts, isLoading, error, refetch } = useQuery({
+  const { data: accounts,isLoading, error, refetch } = useQuery({
     queryKey: ["accounts", user?.id],
     queryFn: fetchAccounts,
     enabled: !!user,
@@ -70,8 +70,7 @@ const DashboardContent: React.FC = () => {
       setIsOpen(false);
       form.reset();
       toast.success("Account created successfully");
-      await refetch();
-      await queryClient.invalidateQueries(["accounts"]);
+      await queryClient.invalidateQueries(["accounts", values.id]);
     } catch (error) {
       toast.error("Failed to create account");
     }
@@ -82,7 +81,7 @@ const DashboardContent: React.FC = () => {
       await deleteAccount(accountId);
       toast.success("Account deleted successfully");
       await refetch();
-      await queryClient.invalidateQueries(["accounts"]);
+      await queryClient.invalidateQueries(["accounts", accountId]);
     } catch (error) {
       toast.error("Failed to delete account");
     }
@@ -213,7 +212,7 @@ const DashboardContent: React.FC = () => {
             <CardTitle>Account Balance Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            {accounts?.length ? <Pie data={accounts.map(({ account_name, balance }) => ({ name: account_name, value: balance }))} angleField="value" colorField="name" radius={0.75} label={false} legend={{ position: "bottom" }} /> : <div className="text-center py-12">No accounts to display</div>}
+            {accounts?.length ? <Pie data={accounts.map(({ account_name, balance }) => ({ name: account_name, value: balance }))} angleField="value" colorField="name" radius={0.75} label={false} legend={{ position: "bottom" }} /> : <div className="text-center py-12">No accounts ,to display</div>}
           </CardContent>
         </Card>
       </div>

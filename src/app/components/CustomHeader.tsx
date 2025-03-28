@@ -54,7 +54,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = () => {
       </h3>
 
       <div className="flex items-center gap-12">
-        <Input placeholder="Search Dashboard" className="w-[200px]" />
+        {/* <Input placeholder="Search Dashboard" className="w-[200px]" /> */}
 
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => {}}>
@@ -65,7 +65,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = () => {
           </Button>
 
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <button className="relative h-9 w-9 rounded-full p-0 cursor-pointer">
                 <Avatar className="h-9 w-9">
                   <AvatarFallback>
