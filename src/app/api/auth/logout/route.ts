@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errorData.error || 'Login failed' }, { status: response.status });
     }
 
-    cookies().delete('token');
+    (await cookies()).delete('token');
 
     return NextResponse.json({ message: 'Logout successful' }, { status: 200 });
   } catch (error) {

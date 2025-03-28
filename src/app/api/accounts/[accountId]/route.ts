@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: { accountId: string } },
-) {
+export async function DELETE(_request: Request, props: { params: Promise<{ accountId: string }> }) {
+  const params = await props.params;
   const { accountId } = params;
 
   if (!accountId) {
@@ -33,7 +31,7 @@ async function deleteAccount(accountId: string): Promise<void> {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Cookie: cookies().toString(),
+        Cookie: (await cookies()).toString(),
       },
       credentials: 'include',
     }

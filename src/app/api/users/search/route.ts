@@ -8,7 +8,7 @@ export async function POST(request: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Cookie: cookies().toString()
+        Cookie: (await cookies()).toString()
       },
       body: JSON.stringify({email}),
       credentials: 'include'

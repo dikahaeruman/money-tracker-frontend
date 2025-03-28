@@ -9,7 +9,7 @@ export async function GET() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: cookies().toString(),
+          Cookie: (await cookies()).toString(),
         },
         credentials: 'include',
       },
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: cookies().toString(),
+          Cookie: (await cookies()).toString(),
         },
         credentials: 'include',
         body: JSON.stringify({ account_name, balance, currency_id }),
