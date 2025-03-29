@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const response = await fetch(`${process.env.BASE_URL}/currencies`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/currencies`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

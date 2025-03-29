@@ -20,6 +20,7 @@ const AlertDialogTrigger = React.forwardRef<
     ref={ref} 
     data-slot="alert-dialog-trigger" 
     {...props} 
+    asChild
   />
 ));
 

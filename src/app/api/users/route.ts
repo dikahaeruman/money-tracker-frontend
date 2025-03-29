@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const response = await fetch(`${process.env.BASE_URL}/users`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const { username, email, password } = await request.json();
 
     const response = await fetch(
-      `${process.env.BASE_URL}/users`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/users`,
       {
         method: 'POST',
         headers: {

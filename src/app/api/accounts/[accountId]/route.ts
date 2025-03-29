@@ -26,7 +26,7 @@ export async function DELETE(_request: Request, props: { params: Promise<{ accou
 
 async function deleteAccount(accountId: string): Promise<void> {
   const response = await fetch(
-    `${process.env.BASE_URL}/accounts/${accountId}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/accounts/${accountId}`,
     {
       method: 'DELETE',
       headers: {

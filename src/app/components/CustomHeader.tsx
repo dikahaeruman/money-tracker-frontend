@@ -6,7 +6,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useQueryClient } from '@tanstack/react-query';
 import { MessageCircle, Bell, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { ModeToggle } from '@/components/ui/toggle-ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +57,8 @@ const CustomHeader: React.FC<CustomHeaderProps> = () => {
         {/* <Input placeholder="Search Dashboard" className="w-[200px]" /> */}
 
         <div className="flex items-center gap-3">
+                  {/* Mode toggle */}
+        <ModeToggle /> {/* This is where you integrate the mode toggle button */}
           <Button variant="ghost" size="icon" onClick={() => {}}>
             <MessageCircle className="h-5 w-5" />
           </Button>

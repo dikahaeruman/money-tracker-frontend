@@ -9,6 +9,7 @@ import { Providers } from './providers'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react';
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider"
 
 const queryClient = new QueryClient()
 
@@ -18,11 +19,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head><title>Money Tracker</title></head>
       <body>
         <QueryClientProvider client={queryClient}>
-        <Providers>{children}</Providers>
+        <Providers>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+          {children}
+          </ThemeProvider>
+          </Providers>
         <Toaster />
       </QueryClientProvider>
       </body>

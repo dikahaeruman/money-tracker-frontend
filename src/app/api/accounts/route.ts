@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     const apiResponse = await fetch(
-      `${process.env.BASE_URL}/accounts`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/accounts`,
       {
         method: 'GET',
         headers: {
@@ -14,7 +14,7 @@ export async function GET() {
         credentials: 'include',
       },
     ).then((response) => response.json());
-
+    console.log('API Response:', apiResponse);
     return NextResponse.json(apiResponse.data, {
       status: 200,
     });
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const { account_name, balance, currency_id } = await request.json();
 
     const apiResponse = await fetch(
-      `${process.env.BASE_URL}/accounts`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/accounts`,
       {
         method: 'POST',
         headers: {
