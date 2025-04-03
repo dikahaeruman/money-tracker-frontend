@@ -53,12 +53,15 @@ async function refreshAccessToken(refreshToken: string) {
 
 export default async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
+
+  console.log('Cookies:', cookieStore.toString());
   const { pathname } = request.nextUrl;
   const token = cookieStore.get('token')?.value;
+  console.log('Token:', token);
   const refreshToken = cookieStore.get('refresh_token')?.value;
-
+  console.log('Refresh Token:', refreshToken);
   const isValidToken = token && token.trim() !== '';
-
+  console.log('Is Valid Token:', isValidToken);
   if (pathname.startsWith('/api')) {
     return NextResponse.next();
   }

@@ -17,7 +17,9 @@ export const fetchAccounts = async (): Promise<Account[]> => {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+
+  return data.data;
 };
 
 export const createAccount = async (accountData: any): Promise<Account> => {

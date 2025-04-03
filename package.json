@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build && bun copy-assets.js",
+    "build-no-lint": "NEXT_IGNORE_ESLINT=1 next build && bun copy-assets.js" ,
     "start": "next start",
+    "standalone": "bun .next/standalone/server.js",
     "lint": "next lint",
     "test": "jest --verbose ./__tests__",
     "format": "prettier --write .",
-    "prepare": "husky",
     "lint-staged": "lint-staged"
   },
   "lint-staged": {

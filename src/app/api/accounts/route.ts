@@ -12,17 +12,34 @@ export async function GET() {
           Cookie: (await cookies()).toString(),
         },
         credentials: 'include',
-      },
-    ).then((response) => response.json());
-    console.log('API Response:', apiResponse);
-    return NextResponse.json(apiResponse.data, {
-      status: 200,
-    });
+      }
+    );
+
+    // Check if the response is successful (2xx status)
+    if (!apiResponse.ok) {
+      const errorData = await apiResponse.text(); // Handle non-JSON error responses
+      console.error('Error Data:', errorData);
+      return NextResponse.json(
+        { error: errorData || 'An unknown error occurred' },
+        { status: apiResponse.status },
+      );
+    }
+
+    // Try to parse the JSON response
+    const apiResponseJson = await apiResponse.json();
+    console.log('API Response:', apiResponseJson);
+
+    const { message, data } = apiResponseJson;
+
+    return NextResponse.json(
+      { message, data },
+      { status: apiResponse.status }
+    );
   } catch (error: any) {
     console.log('Error:', error);
     return NextResponse.json(
       { error: error.message || 'An unknown error occurred' },
-      { status: error.status || 500 },
+      { status: 500 },
     );
   }
 }
@@ -44,17 +61,27 @@ export async function POST(request: Request) {
       }
     );
 
+    // Check if the response is successful (2xx status)
+    if (!apiResponse.ok) {
+      const errorData = await apiResponse.text(); // Handle non-JSON error responses
+      console.error('Error Data:', errorData);
+      return NextResponse.json(
+        { error: errorData || 'An unknown error occurred' },
+        { status: apiResponse.status },
+      );
+    }
+
+    // Parse the JSON response
     const jsonResponse = await apiResponse.json();
 
     return NextResponse.json(jsonResponse, {
       status: apiResponse.status,
     });
-
   } catch (error: any) {
     console.log('Error:', error);
     return NextResponse.json(
       { error: error.message || 'An unknown error occurred' },
-      { status: error.status || 500 },
+      { status: 500 },
     );
   }
 }

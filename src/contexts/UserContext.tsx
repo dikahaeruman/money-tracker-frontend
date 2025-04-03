@@ -14,21 +14,28 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch user function with error handling
   const fetchUser = useCallback(async () => {
     try {
       const response = await fetch('/api/users', { credentials: 'include' });
+      const text = await response.text();  // Get raw response text
+
+      console.log('Raw API Response:', text);
+
       if (response.ok) {
-        const userData = await response.json();
-        setUser(userData.data);
+        // Parse JSON only if the response is OK
+        const userData = JSON.parse(text);
+        console.log('Parsed User Data:', userData);
+        setUser(userData.data);  // Assuming response has a 'data' property
       } else {
-        // Handle non-OK responses (e.g., unauthorized)
-        setUser(null);
+        console.error('Failed to fetch user, status:', response.status);
+        setUser(null);  // Clear user if not OK (e.g., unauthorized)
       }
     } catch (error) {
       console.error('Error fetching user:', error);
-      setUser(null);
+      setUser(null);  // Clear user if there's an error
     } finally {
-      setLoading(false);
+      setLoading(false);  // Stop loading once request is complete
     }
   }, []);
 

@@ -11,8 +11,20 @@ export async function GET() {
             },
             credentials: 'include',
         });
+        console.log('API Response Currency:', response);
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error Data:', errorData);
+            return NextResponse.json(
+                { error: errorData.message || 'An unknown error occurred' },
+                { status: response.status }
+            );
+        }
         const { message, data } = await response.json();
-        return NextResponse.json({ message, data }, { status: response.status });
+        return NextResponse.json(
+            { message, data }, 
+            { status: response.status }
+        );
     } catch (error: any) {
         console.log('Error:', error);
         return NextResponse.json(

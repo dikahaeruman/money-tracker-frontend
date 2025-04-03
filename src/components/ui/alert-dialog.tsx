@@ -12,6 +12,8 @@ function AlertDialog({
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
 }
 
+AlertDialog.displayName = 'AlertDialog';
+
 const AlertDialogTrigger = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Trigger>,
   React.ComponentProps<typeof AlertDialogPrimitive.Trigger>
@@ -24,6 +26,9 @@ const AlertDialogTrigger = React.forwardRef<
   />
 ));
 
+
+AlertDialogTrigger.displayName = "AlertDialogTrigger";
+
 function AlertDialogPortal({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
@@ -31,6 +36,7 @@ function AlertDialogPortal({
     <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
   )
 }
+
 
 function AlertDialogOverlay({
   className,

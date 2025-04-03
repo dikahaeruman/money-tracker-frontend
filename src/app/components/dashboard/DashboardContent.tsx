@@ -18,11 +18,14 @@ const formSchema = z.object({
   currency: z.string().min(1, "Currency is required"),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
+
 const DashboardContent: React.FC = () => {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  const form = useForm({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", balance: undefined, currency: "" },
   });
@@ -33,7 +36,7 @@ const DashboardContent: React.FC = () => {
     enabled: !!user,
   });
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await createAccount({
         account_name: values.name,
@@ -41,9 +44,10 @@ const DashboardContent: React.FC = () => {
         currency_id: parseInt(values.currency, 10), // Ensure it's an integer
       });
       setIsOpen(false);
-      form.reset();
       toast.success("Account created successfully");
-      await queryClient.invalidateQueries(["accounts", values.id]);
+      await queryClient.invalidateQueries({
+        queryKey: ["accounts"]
+      });
     } catch (error) {
       toast.error("Failed to create account");
     }
@@ -54,13 +58,13 @@ const DashboardContent: React.FC = () => {
       await deleteAccount(accountId);
       toast.success("Account deleted successfully");
       await refetch();
-      await queryClient.invalidateQueries(["accounts", accountId]);
+      await queryClient.invalidateQueries({
+        queryKey: ["accounts"]
+      });
     } catch (error) {
       toast.error("Failed to delete account");
     }
   }, [refetch, queryClient]);
-
-  const { data: currencies } = useQuery({ queryKey: ["currencies"], queryFn: fetchCurrencies });
 
   if (isLoading) {
     return (
