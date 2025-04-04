@@ -10,7 +10,7 @@ const AccountList: React.FC<{ accounts: Account[] | undefined, onDeleteAccount: 
       dataSource={accounts}
       renderItem={(account) => (
         <List.Item key={account.id}>
-          <AccountCard account={account} onDelete={onDeleteAccount}/>
+          <AccountCard account={account} onDelete={onDeleteAccount} />
         </List.Item>
       )}
     />

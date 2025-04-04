@@ -14,14 +14,17 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch user function with error handling
   const fetchUser = useCallback(async () => {
     try {
       const response = await fetch('/api/users', { credentials: 'include' });
+      const text = await response.text();
+
       if (response.ok) {
-        const userData = await response.json();
+        const userData = JSON.parse(text);
         setUser(userData.data);
       } else {
-        // Handle non-OK responses (e.g., unauthorized)
+        console.error('Failed to fetch user, status:', response.status);
         setUser(null);
       }
     } catch (error) {

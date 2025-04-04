@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  next:
+    labels:
+      shipyard.route: '/'
+    build:
+      context: .
+      dockerfile: Dockerfile_dev
+    ports:
+      - '3000:3000'
+    develop:
+      watch:
+        - action: sync
+          path: ./public
+          target: /app/public
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: package.json

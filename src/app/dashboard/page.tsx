@@ -1,17 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Layout, Spin } from 'antd';
 import Sidebar from '@/app/components/Sidebar';
-import styles from './page.module.css';
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Button } from '@/components/ui/button';
+import { MenuIcon, PanelLeftCloseIcon } from 'lucide-react';
 import CustomHeader from '@/app/components/CustomHeader';
-import { useQuery } from '@tanstack/react-query';
 import SettingsContent from '@/app/components/SettingsContent';
 import DashboardContent from '@/app/components/dashboard/DashboardContent';
 import { useUser } from '@/contexts/UserContext';
-
-const { Sider, Header, Content } = Layout;
+import { Spinner } from '@/components/ui/spinner';
 
 const Dashboard = () => {
   const [currentContent, setCurrentContent] = useState('dashboard');
@@ -20,15 +17,8 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        <Spin size="large" />
+      <div className="flex justify-center items-center h-screen">
+      <Spinner size="lg" />
       </div>
     );
   }
@@ -45,29 +35,29 @@ const Dashboard = () => {
   };
 
   return (
-    <Layout>
-      <Sider
-        theme="light"
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        className="sider"
+    <div className="flex h-screen">
+    <aside className={`bg-background border-r h-screen sticky top-0 overflow-hidden ${
+      collapsed ? 'w-20' : 'w-64'
+    } transition-all duration-300`}>
+      <Sidebar collapsed={collapsed} onMenuSelect={setCurrentContent} />
+      <Button
+        variant="ghost"
+        size="icon"
+        className="fixed bottom-4 left-4 h-10 w-10"
+        onClick={() => setCollapsed(!collapsed)}
       >
-        <Sidebar onMenuSelect={setCurrentContent} />
-        <Button
-          type="text"
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={() => setCollapsed(!collapsed)}
-          className={styles.triggerButton}
-        />
-      </Sider>
-      <Layout>
-        <Header className={styles.header}>
+        {collapsed ? <MenuIcon size={20} /> : <PanelLeftCloseIcon size={20} />}
+      </Button>
+    </aside>
+      <div className="flex-1">
+        <header className="bg-muted/50 border-b h-16">
           <CustomHeader />
-        </Header>
-        <Content className={styles.content}>{renderContent()}</Content>
-      </Layout>
-    </Layout>
+        </header>
+        <main className="p-6">
+          {renderContent()}
+        </main>
+      </div>
+    </div>
   );
 };
 

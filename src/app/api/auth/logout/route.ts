@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
-    const response = await fetch(`${process.env.BASE_URL}/auth/logout`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errorData.error || 'Login failed' }, { status: response.status });
     }
 
-    cookies().delete('token');
+    (await cookies()).delete('token');
 
     return NextResponse.json({ message: 'Logout successful' }, { status: 200 });
   } catch (error) {

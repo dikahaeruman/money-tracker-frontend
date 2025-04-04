@@ -3,14 +3,23 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const response = await fetch(`${process.env.BASE_URL}/users`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Cookie: cookies().toString()
+        Cookie: (await cookies()).toString()
       },
       credentials: 'include'
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error Data:', errorData);
+      return NextResponse.json(
+        { error: errorData.message || 'An unknown error occurred' },
+        { status: response.status }
+      );
+    }
     const { message, data } = await response.json();
     return NextResponse.json({
       message,
@@ -32,7 +41,7 @@ export async function POST(request: Request) {
     const { username, email, password } = await request.json();
 
     const response = await fetch(
-      `${process.env.BASE_URL}/users`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/users`,
       {
         method: 'POST',
         headers: {

@@ -9,12 +9,14 @@ function isPublicPath(path: string): boolean {
 }
 
 async function verifyToken(): Promise<boolean> {
+  const cookieStore = await cookies();
+
   try {
     const response = await fetch(`${process.env.BASE_URL}/verify`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Cookie: cookies().toString()
+        Cookie: cookieStore.toString()
       },
       credentials: 'include',
     });
@@ -50,12 +52,12 @@ async function refreshAccessToken(refreshToken: string) {
 }
 
 export default async function middleware(request: NextRequest) {
+  const cookieStore = await cookies();
+
   const { pathname } = request.nextUrl;
-  const token = cookies().get('token')?.value;
-  const refreshToken = cookies().get('refresh_token')?.value;
-
+  const token = cookieStore.get('token')?.value;
+  const refreshToken = cookieStore.get('refresh_token')?.value;
   const isValidToken = token && token.trim() !== '';
-
   if (pathname.startsWith('/api')) {
     return NextResponse.next();
   }

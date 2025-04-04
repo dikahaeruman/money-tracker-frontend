@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  money_tracker_frontend:
+    container_name: money_tracker_frontend
+    # image: registry.ilyasabdut.loseyourip.com/money-tracker-frontend:0.0.1
+    # pull_policy: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+        - NEXT_PUBLIC_BASE_AI_URL=http://207.211.157.0:8000
+        - BASE_URL=http://207.211.157.0/api
+        - NEXT_PUBLIC_BASE_URL=http://207.211.157.0/api
+    environment:
+      NODE_ENV: production
+      BASE_URL: http://207.211.157.0/api
+    ports:
+      - "3000:3000"
+    networks:
+      - nextjs-network
+
+networks:
+  nextjs-network:
+    driver: bridge

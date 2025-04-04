@@ -4,25 +4,39 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     const apiResponse = await fetch(
-      `${process.env.BASE_URL}/accounts`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/accounts`,
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: cookies().toString(),
+          Cookie: (await cookies()).toString(),
         },
         credentials: 'include',
-      },
-    ).then((response) => response.json());
+      }
+    );
 
-    return NextResponse.json(apiResponse.data, {
-      status: 200,
-    });
+    if (!apiResponse.ok) {
+      const errorData = await apiResponse.text();
+      console.error('Error Data:', errorData);
+      return NextResponse.json(
+        { error: errorData || 'An unknown error occurred' },
+        { status: apiResponse.status },
+      );
+    }
+
+    const apiResponseJson = await apiResponse.json();
+
+    const { message, data } = apiResponseJson;
+
+    return NextResponse.json(
+      { message, data },
+      { status: apiResponse.status }
+    );
   } catch (error: any) {
     console.log('Error:', error);
     return NextResponse.json(
       { error: error.message || 'An unknown error occurred' },
-      { status: error.status || 500 },
+      { status: 500 },
     );
   }
 }
@@ -32,29 +46,38 @@ export async function POST(request: Request) {
     const { account_name, balance, currency_id } = await request.json();
 
     const apiResponse = await fetch(
-      `${process.env.BASE_URL}/accounts`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/accounts`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: cookies().toString(),
+          Cookie: (await cookies()).toString(),
         },
         credentials: 'include',
         body: JSON.stringify({ account_name, balance, currency_id }),
       }
     );
 
+    if (!apiResponse.ok) {
+      const errorData = await apiResponse.text();
+      console.error('Error Data:', errorData);
+      return NextResponse.json(
+        { error: errorData || 'An unknown error occurred' },
+        { status: apiResponse.status },
+      );
+    }
+
+    // Parse the JSON response
     const jsonResponse = await apiResponse.json();
 
     return NextResponse.json(jsonResponse, {
       status: apiResponse.status,
     });
-
   } catch (error: any) {
     console.log('Error:', error);
     return NextResponse.json(
       { error: error.message || 'An unknown error occurred' },
-      { status: error.status || 500 },
+      { status: 500 },
     );
   }
 }
