@@ -24,7 +24,6 @@ export const fetchAccounts = async (): Promise<Account[]> => {
 
 export const createAccount = async (accountData: any): Promise<Account> => {
 
-  console.log("accountData", accountData)
   const response = await fetch('/api/accounts', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

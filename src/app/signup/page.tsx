@@ -75,8 +75,6 @@ const SignUp: React.FC = () => {
         body: JSON.stringify(values),
       });
 
-      console.log('Response:', response);
-
       if (response.status === 201) {
         setSuccessMessage('Registration successful! Redirecting to login page...');
         setTimeout(() => {

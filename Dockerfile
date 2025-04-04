@@ -21,6 +21,9 @@ ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 # Build Next.js application
 RUN bun run build-no-lint
 
+# Remove Next.js cache to reduce image size
+RUN rm -rf /app/.next/cache
+
 # Production stage
 FROM oven/bun:1.2-alpine
 
@@ -43,7 +46,7 @@ COPY --from=builder /app/next.config.mjs ./next.config.mjs
 RUN NODE_ENV=production bun install --production --frozen-lockfile --ignore-scripts --verbose
 
 # Clean up unnecessary files (e.g., docs, test files)
-RUN rm -rf /app/docs /app/tests /app/scripts /app/migrations
+RUN rm -rf /app/docs /app/tests /app/scripts /app/migrations /app/coverage
 
 # Switch to the non-root user for security reasons
 USER appuser
@@ -52,4 +55,4 @@ USER appuser
 EXPOSE 3000
 
 # Run the application using Bun
-CMD ["bun", "run", "start"]
+CMD ["bun", "run", "standalone"]

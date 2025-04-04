@@ -18,24 +18,20 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const fetchUser = useCallback(async () => {
     try {
       const response = await fetch('/api/users', { credentials: 'include' });
-      const text = await response.text();  // Get raw response text
-
-      console.log('Raw API Response:', text);
+      const text = await response.text();
 
       if (response.ok) {
-        // Parse JSON only if the response is OK
         const userData = JSON.parse(text);
-        console.log('Parsed User Data:', userData);
-        setUser(userData.data);  // Assuming response has a 'data' property
+        setUser(userData.data);
       } else {
         console.error('Failed to fetch user, status:', response.status);
-        setUser(null);  // Clear user if not OK (e.g., unauthorized)
+        setUser(null);
       }
     } catch (error) {
       console.error('Error fetching user:', error);
-      setUser(null);  // Clear user if there's an error
+      setUser(null);
     } finally {
-      setLoading(false);  // Stop loading once request is complete
+      setLoading(false);
     }
   }, []);
 

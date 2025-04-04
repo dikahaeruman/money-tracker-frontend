@@ -11,7 +11,6 @@ export async function GET() {
             },
             credentials: 'include',
         });
-        console.log('API Response Currency:', response);
         if (!response.ok) {
             const errorData = await response.json();
             console.error('Error Data:', errorData);

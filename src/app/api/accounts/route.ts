@@ -15,9 +15,8 @@ export async function GET() {
       }
     );
 
-    // Check if the response is successful (2xx status)
     if (!apiResponse.ok) {
-      const errorData = await apiResponse.text(); // Handle non-JSON error responses
+      const errorData = await apiResponse.text();
       console.error('Error Data:', errorData);
       return NextResponse.json(
         { error: errorData || 'An unknown error occurred' },
@@ -25,9 +24,7 @@ export async function GET() {
       );
     }
 
-    // Try to parse the JSON response
     const apiResponseJson = await apiResponse.json();
-    console.log('API Response:', apiResponseJson);
 
     const { message, data } = apiResponseJson;
 
@@ -61,9 +58,8 @@ export async function POST(request: Request) {
       }
     );
 
-    // Check if the response is successful (2xx status)
     if (!apiResponse.ok) {
-      const errorData = await apiResponse.text(); // Handle non-JSON error responses
+      const errorData = await apiResponse.text();
       console.error('Error Data:', errorData);
       return NextResponse.json(
         { error: errorData || 'An unknown error occurred' },
